@@ -1,7 +1,8 @@
 const {
   CODE_ERROR,
-  CODE_SUCCESS
-} = require('../utils/constant')
+  CODE_SUCCESS,
+  CODE_TOKENERROR
+} = require('./constant')
 
 class Result {
   constructor(data, msg = '操作成功', options) {
@@ -38,6 +39,10 @@ class Result {
 
   fail(res) {
     this.code = CODE_ERROR
+    this.json(res)
+  }
+  jwtError(res) {
+    this.code = CODE_TOKENERROR,
     this.json(res)
   }
 }

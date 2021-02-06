@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const Reslut = require('../utils/Result')
-const { User } = require('../models/connect')
+//导入User规则模块
+const { User } = require('../models/user')
 const jwt = require('jsonwebtoken')
 const { SELRET_KEY } = require('../utils/constant')
 //密钥
@@ -54,8 +55,18 @@ router.get('/info', async(req,res) => {
   const raw = String(req.headers.authorization).split(' ').pop()
   const tokenData = jwt.verify(raw,SELRET_KEY)
   const {id} = tokenData
-  console.log(tokenData)
-  res.send('ok')
+  const info = await User.findOne({
+    _id:id
+  })
+  if (info){
+    const allinfo = await User.find()
+    console.log(allinfo)
+    new Reslut(allinfo,'更新成功').success(res)
+  }else {
+    new Reslut(null,'查找失败').fail(res)
+
+  }
+
 })
 
 module.exports = router

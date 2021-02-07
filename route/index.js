@@ -1,6 +1,9 @@
 const express = require('express')
 const boom = require('boom')
+
 const userRouter = require('./user')
+const employeeRouter = require('./employee')
+
 const jwtAuth = require('../utils/jwt')
 const Result = require('../utils/Result')
 //注册路由
@@ -15,6 +18,8 @@ router.get('/',(req,res) => {
 
 //用户路由
 router.use('/manage/user',userRouter)
+//员工页面路由
+router.use('/manage/employee',employeeRouter)
 
 router.use((req,res,next) => {
   next(boom.notFound('接口不存在'))

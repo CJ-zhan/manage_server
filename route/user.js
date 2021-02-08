@@ -3,6 +3,7 @@ const router = express.Router()
 const Reslut = require('../utils/Result')
 //导入User规则模块
 const { User } = require('../models/user')
+//jwt获取生成token
 const jwt = require('jsonwebtoken')
 const { SELRET_KEY } = require('../utils/constant')
 //密钥
@@ -14,13 +15,13 @@ router.post('/register',async(req,res,next) => {
   
   let user = await User.findOne({user:req.body.user})
   if(user) {
-    new Reslut(null,'用户名已存在，请重新注册!').fail(res.status(422))
+    new Reslut({},'用户名已存在，请重新注册!').fail(res.status(422))
   }else{
     await User.create({
       user:req.body.user,
       password:req.body.password
     })
-    new Reslut(null,'注册成功,请登录!').success(res)
+    new Reslut({},'注册成功,请登录!').success(res)
   }
 })
 
@@ -33,11 +34,12 @@ router.post('/login',async(req,res,next) => {
     user:user
   })
   if (!username) {
-    new Reslut(null,'用户不存在或密码错误').fail(res.status(422))
+    new Reslut({},'用户不存在或密码错误').fail(res.status(422))
   }
   // 确认请求密码和数据库的密码是否正确
   const isPasswordValid = require('bcrypt').compareSync(password,username.password )
   if (isPasswordValid){
+  //jwt获取生成token
     const token = jwt.sign({
       id: String(username._id),
     },SELRET_KEY)
@@ -46,7 +48,7 @@ router.post('/login',async(req,res,next) => {
     }
     new Reslut(data,'登录成功').success(res)
   }else{
-    new Reslut(null,'用户不存在或密码错误').fail(res)
+    new Reslut({},'用户不存在或密码错误').fail(res)
   }
 })
 
@@ -63,7 +65,7 @@ router.get('/info', async(req,res) => {
     console.log(allinfo)
     new Reslut(allinfo,'更新成功').success(res)
   }else {
-    new Reslut(null,'查找失败').fail(res)
+    new Reslut({},'查找失败').fail(res)
 
   }
 

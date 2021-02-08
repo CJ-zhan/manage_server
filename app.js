@@ -8,6 +8,7 @@ require('./models/connect')
 app.use(bodyPraser.urlencoded({extended: true}))
 app.use(bodyPraser.json())
 
+//路由模块
 app.use('/',router)
 
 app.listen(3000,() => {

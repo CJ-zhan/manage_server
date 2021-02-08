@@ -6,43 +6,53 @@ const { Employee } = require('../models/employee')
 
 //获取员工信息
 router.get('/info', async(req,res,next) => {
-    // let limit = req.query.pagesize||10; //分页参数
-    // let currentPage = req.query.page||1; //当前页码
     console.log(req.query)
     let params = {
       ...req.query
     }
     delete params.page
     delete params.pagesize
-    if (params.type) {
-      //按需查询
-      if (params.type == '1') {
+    if (params.type && params.type !== undefined) {//查询接口
+      //按需查询员工信息
+      if (params.type === '1') {
         const info = await Employee.find({p_name:new RegExp(params.p_name)})
         new Reslut(info,'查询成功').success(res)
-      }else if (params.type == '2') {
+      }else if (params.type === '2') {
         const info = await Employee.find({p_id:new RegExp(params.p_id)})
         new Reslut(info,'查询成功').success(res)
-      }else if (params.type == '3') {
+      }else if (params.type === '3') {
         const info = await Employee.find({p_pid:new RegExp(params.p_pid)})
         new Reslut(info,'查询成功').success(res)
-      }else if (params.type == '4') {
+      }else if (params.type === '4') {
         const info = await Employee.find({p_school:new RegExp(params.p_school)})
         new Reslut(info,'查询成功').success(res)
       }else {
         const info = await Employee.find({p_sex:params.p_sex})
         new Reslut(info,'查询成功').success(res)
       }
-    }else {
+    }else if(params.p_department && params.p_department !== undefined){ //按部门管理查询员工信息
+      if (params.searchdeparttype && params.searchdeparttype !== undefined) {
+        if (params.searchdeparttype === '1') {
+          const info = await Employee.find({$and:[{p_department:params.p_department},{p_name:new RegExp(params.p_name)}]})
+          new Reslut(info,'查询成功').success(res)
+          return
+        }else if (params.searchdeparttype === '2') {
+          const info = await Employee.find({$and:[{p_department:params.p_department},{p_position:new RegExp(params.p_position)}]})
+          new Reslut(info,'查询成功').success(res)
+          return
+        }else{
+          const info = await Employee.find({$and:[{p_department:params.p_department},{p_id:new RegExp(params.p_id)}]})
+          new Reslut(info,'查询成功').success(res)
+          return
+        }
+      }
+      const info = await Employee.find({p_department:params.p_department})
+      new Reslut(info,'查询成功').success(res)
+    } else {
       //查询所有信息
       const allinfo = await Employee.find({})
       new Reslut(allinfo,'更新成功').success(res)
     }
-
-    // if (currentPage < 1) {
-    //   currentPage = 1
-    // }
-    // const info = await Employee.find({}).skip((parseInt(currentPage)-1)*parseInt(limit)).limit(parseInt(limit))
-    // new Reslut(info,'更新成功').success(res)
 })
 
 //添加员工信息
@@ -69,20 +79,21 @@ router.post('/addinfo',async(req,res,next) => {
       p_rtime:req.body.p_rtime,
       p_ztime:req.body.p_ztime,
     })
-    new Reslut(null,'添加成功').success(res)
+    new Reslut({},'添加成功').success(res)
 })
 //编辑员工信息
 router.post('/editinfo',async(req,res,next) => {
   console.log(req.body)
-  console.log(req.body._id)
   const params = req.body
-  // await Employee.updateOne({_id:req.body._id})
+  await Employee.updateOne({_id:req.body._id},params)
+  new Reslut({},'编辑成功').success(res)
+
 })
 //删除员工信息
 router.post('/deleteinfo',async(req,res,next) => {
   console.log(req.body)
   await Employee.findByIdAndDelete({_id:req.body._id})
-  new Reslut(null,'删除成功').success(res)
+  new Reslut({},'删除成功').success(res)
 })
 
 module.exports = router

@@ -8,6 +8,9 @@ class Result {
   constructor(data, msg = '操作成功', options) {
     this.data = data
     this.msg = msg
+    if(data) {
+      this.count = data.length || 0
+    }
     if (options) {
       this.options = options
     }
@@ -20,7 +23,8 @@ class Result {
     let base = {
       code: this.code,
       data: this.data,
-      msg: this.msg
+      msg: this.msg,
+      count:this.data.length
     }
     if (this.options) {
       base = { ...base, ...this.options }

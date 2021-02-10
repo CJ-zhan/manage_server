@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Reslut = require('../utils/Result')
 //导入Employee规则模块
-const { Employee } = require('../models/employee')
+const { Employee, Salary } = require('../models/employee')
 
 //获取员工信息
 router.get('/info', async(req,res,next) => {
@@ -57,7 +57,7 @@ router.get('/info', async(req,res,next) => {
 
 //添加员工信息
 router.post('/addinfo',async(req,res,next) => {
-  console.log(req.body)
+  // console.log(req.body)
     await Employee.create({
       p_name:req.body.p_name,
       p_sex:req.body.p_sex,
@@ -79,6 +79,17 @@ router.post('/addinfo',async(req,res,next) => {
       p_rtime:req.body.p_rtime,
       p_ztime:req.body.p_ztime,
     })
+    const employeeid = await Employee.findOne({p_id:req.body.p_id})
+    console.log(employeeid)
+    await Salary.create({
+      s_salary: req.body.s_salary || 4000,
+      s_insurance: req.body.s_insurance || 0,
+      s_fund: req.body.s_fund || 0,
+      s_addsalary: req.body.s_addsalary || 0,
+      s_allowance: req.body.s_allowance || 0,
+      s_realsalary: req.body.s_realsalary || 4000,
+      s_name: employeeid._id,
+    })
     new Reslut({},'添加成功').success(res)
 })
 //编辑员工信息
@@ -91,8 +102,11 @@ router.post('/editinfo',async(req,res,next) => {
 })
 //删除员工信息
 router.post('/deleteinfo',async(req,res,next) => {
-  console.log(req.body)
-  await Employee.findByIdAndDelete({_id:req.body._id})
+  const params = {
+    ...req.body
+  }
+  console.log(params)
+  await Employee.findByIdAndDelete({_id:params._id})
   new Reslut({},'删除成功').success(res)
 })
 

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 
+//员工信息表 规则
 EmployeeSchema = new mongoose.Schema({
   p_name:{ type:String },
   p_sex:{ type:Number },
@@ -22,8 +23,21 @@ EmployeeSchema = new mongoose.Schema({
   p_rtime:{ type:String},
   p_ztime:{ type:String},
 })
+
+//员工薪资表信息关联  规则
+SalarySchema = new mongoose.Schema({
+  s_salary: { type:Number },
+  s_insurance: { type:Number },
+  s_fund: { type:Number },
+  s_addsalary: { type:Number },
+  s_allowance: { type:Number },
+  s_realsalary: { type:Number },
+  s_name:{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee'}
+})
 const Employee = mongoose.model('Employee',EmployeeSchema)
+const Salary = mongoose.model('Salary',SalarySchema)
 
 module.exports= {
-  Employee
+  Employee,
+  Salary
 }

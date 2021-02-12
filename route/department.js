@@ -30,15 +30,19 @@ router.post('/adddepart',async(req,res,next) => {
   console.log(req.body)
   await Department.create({
     d_name:req.body.d_name,
-    d_describe:req.body.d_describe
+    d_describe:req.body.d_describe,
+    mtime:(new Date().getTime())/1000
   })
   new Reslut({},'添加成功').success(res)
 })
 
 //更新部门信息
 router.post('/updatedepart',async(req,res,next) => {
-  console.log(req.body)
-  const params = req.body
+  const mtime = new Date()
+  const params = {
+    ...req.body,
+    mtime:(mtime.getTime()/1000)
+  }
   await Department.updateOne({_id:req.body._id},params)
   new Reslut({},'编辑成功').success(res)
 })

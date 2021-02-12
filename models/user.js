@@ -12,7 +12,8 @@ UserSchema = new mongoose.Schema({
   },
   role:{ type:String },
   status:{ type:Number },
-  nickname: { type: String }
+  nickname: { type: String },
+  mtime:{ type:String }
 })
 const User = mongoose.model('User',UserSchema)
 

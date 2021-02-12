@@ -21,8 +21,10 @@ router.get('/info', async(req,res,next) => {
 
 //编辑员工薪资信息
 router.post('/updateinfo', async(req,res,next) => {
+  const mtime = new Date()
   const params = {
-    ...req.body
+    ...req.body,
+    mtime:(mtime.getTime()/1000)
   }
   await Salary.updateOne({_id:req.body._id},params)
   new Reslut({},'编辑成功').success(res)

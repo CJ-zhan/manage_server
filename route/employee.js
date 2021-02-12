@@ -78,6 +78,7 @@ router.post('/addinfo',async(req,res,next) => {
       p_email:req.body.p_email,
       p_rtime:req.body.p_rtime,
       p_ztime:req.body.p_ztime,
+      mtime:(new Date().getTime())/1000
     })
     const employeeid = await Employee.findOne({p_id:req.body.p_id})
     console.log(employeeid)
@@ -89,16 +90,19 @@ router.post('/addinfo',async(req,res,next) => {
       s_allowance: req.body.s_allowance || 0,
       s_realsalary: req.body.s_realsalary || 4000,
       s_name: employeeid._id,
+      mtime:(new Date().getTime())/1000
     })
     new Reslut({},'添加成功').success(res)
 })
 //编辑员工信息
 router.post('/editinfo',async(req,res,next) => {
-  console.log(req.body)
-  const params = req.body
+  const mtime = new Date()
+  const params = {
+    ...req.body,
+    mtime:(mtime.getTime()/1000)
+  }
   await Employee.updateOne({_id:req.body._id},params)
   new Reslut({},'编辑成功').success(res)
-
 })
 //删除员工信息
 router.post('/deleteinfo',async(req,res,next) => {

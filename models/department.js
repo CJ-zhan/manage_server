@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 
 DepartmentSchema = new mongoose.Schema({
   d_name: { type:String },
-  d_describe: { type:String }
+  d_describe: { type:String },
+  mtime:{ type:String}
 })
 const Department = mongoose.model('Department',DepartmentSchema)
 

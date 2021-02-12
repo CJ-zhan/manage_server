@@ -22,6 +22,7 @@ EmployeeSchema = new mongoose.Schema({
   p_email:{ type:String},
   p_rtime:{ type:String},
   p_ztime:{ type:String},
+  mtime:{ type:String}
 })
 
 //员工薪资表信息关联  规则
@@ -32,7 +33,8 @@ SalarySchema = new mongoose.Schema({
   s_addsalary: { type:Number },
   s_allowance: { type:Number },
   s_realsalary: { type:Number },
-  s_name:{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee'}
+  s_name:{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee'},
+  mtime:{ type:String}
 })
 const Employee = mongoose.model('Employee',EmployeeSchema)
 const Salary = mongoose.model('Salary',SalarySchema)

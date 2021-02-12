@@ -19,7 +19,10 @@ router.post('/register',async(req,res,next) => {
   }else{
     await User.create({
       user:req.body.user,
-      password:req.body.password
+      password:req.body.password,
+      role:'generaladmin',
+      status: 0,
+      nickname:'普通管理员'
     })
     new Reslut({},'注册成功,请登录!').success(res)
   }
@@ -63,12 +66,52 @@ router.get('/info', async(req,res) => {
   if (info){
     const allinfo = await User.find()
     console.log(allinfo)
-    new Reslut(allinfo,'更新成功').success(res)
+    new Reslut(allinfo,'查找成功').success(res)
   }else {
     new Reslut({},'查找失败').fail(res)
-
   }
+})
 
+//获取用户信息接口
+router.get('/powerinfo', async(req,res) => {
+  const raw = String(req.headers.authorization).split(' ').pop()
+  const tokenData = jwt.verify(raw,SELRET_KEY)
+  const {id} = tokenData
+  const info = await User.findOne({
+    _id:id
+  })
+  if (info){
+    const {_id,user,nickname,role, status} = await User.findOne({_id:id})
+    const powerinfo = {
+      _id,
+      user,
+      nickname,
+      role,
+      status
+    }
+    console.log(powerinfo)
+    new Reslut(powerinfo,'获取权限信息成功').success(res)
+  }else {
+    new Reslut({},'获取权限信息失败').fail(res)
+  }
+})
+
+//启用管理员状态
+router.post('/openpower',async(req,res,next) => {
+  console.log(req.body)
+  await User.updateOne({_id:req.body._id},{status: 1})
+  new Reslut({},'启用成功').success(res)
+})
+//禁用管理员状态
+router.post('/closepower',async(req,res,next) => {
+  console.log(req.body)
+  await User.updateOne({_id:req.body._id},{status: 0})
+  new Reslut({},'禁用成功').success(res)
+})
+//删除管理员
+router.post('/deleteuser',async(req,res,next) => {
+  await User.findByIdAndDelete({_id:req.body._id})
+  new Reslut({},'删除成功').success(res)
 })
 
 module.exports = router

@@ -9,7 +9,10 @@ UserSchema = new mongoose.Schema({
       // 加密处理
       return require('bcrypt').hashSync(val,10)
     }
-  }
+  },
+  role:{ type:String },
+  status:{ type:Number },
+  nickname: { type: String }
 })
 const User = mongoose.model('User',UserSchema)
 

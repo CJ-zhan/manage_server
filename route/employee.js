@@ -94,6 +94,58 @@ router.post('/addinfo',async(req,res,next) => {
     })
     new Reslut({},'添加成功').success(res)
 })
+
+//批量添加员工信息
+router.post('/addmany',async (req,res,next) => {
+  const params = [
+    ...req.body.data_json
+  ]
+  // console.log(params)
+  const data = {
+    total:params.length,
+    success: 0
+  }
+  params.map(async item => {
+    await Employee.create({
+      p_name:item.p_name,
+      p_sex:item.p_sex,
+      p_birth:item.p_birth,
+      p_pid:item.p_pid,
+      p_minzu:item.p_minzu,
+      p_nation:item.p_nation,
+      p_fromwhere:item.p_fromwhere,
+      p_marriage:item.p_marriage,
+      p_address:item.p_address,
+      p_xueli:item.p_xueli,
+      p_school:item.p_school,
+      p_profession:item.p_profession,
+      p_id:item.p_id,
+      p_department:item.p_department,
+      p_position:item.p_position,
+      p_phone:item.p_phone,
+      p_email:item.p_email,
+      p_rtime:item.p_rtime,
+      p_ztime:item.p_ztime,
+      mtime:(new Date().getTime())/1000
+    })
+    const employeeid = await Employee.findOne({p_id:item.p_id})
+    console.log(employeeid)
+    await Salary.create({
+      s_salary: item.s_salary || 4000,
+      s_insurance: item.s_insurance || 0,
+      s_fund:item.s_fund || 0,
+      s_addsalary: item.s_addsalary || 0,
+      s_allowance: item.s_allowance || 0,
+      s_realsalary: item.s_realsalary || 4000,
+      s_name: employeeid._id,
+      mtime:(new Date().getTime())/1000
+    })
+    console.log(data)
+    data.success = data.success + 1
+  })
+  new Reslut(data, '新增成功').success(res)
+  console.log(123)
+})
 //编辑员工信息
 router.post('/editinfo',async(req,res,next) => {
   const mtime = new Date()
@@ -109,7 +161,6 @@ router.post('/deleteinfo',async(req,res,next) => {
   const params = {
     ...req.body
   }
-  console.log(params)
   await Employee.findByIdAndDelete({_id:params._id})
   new Reslut({},'删除成功').success(res)
 })

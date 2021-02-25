@@ -8,7 +8,7 @@ const { Employee } = require('../models/employee')
 
 //获取部门信息
 router.get('/info', async(req,res,next) => {
-  console.log(req.query)
+  console.log('获取部门信息')
   let params = {
     ...req.query
   }

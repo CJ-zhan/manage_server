@@ -57,12 +57,13 @@ router.post('/login',async(req,res,next) => {
     }
   
   }else{
-    new Reslut({},'密码错误').fail(res)
+    new Reslut({},'密码错误').fail(res.status(403))
   }
 })
 
 //获取所有管理员信息接口
 router.get('/info', async(req,res) => {
+  console.log('获取管理员信息')
   const raw = String(req.headers.authorization).split(' ').pop()
   const tokenData = jwt.verify(raw,SELRET_KEY)
   const {id} = tokenData
@@ -74,7 +75,7 @@ router.get('/info', async(req,res) => {
     console.log(allinfo)
     new Reslut(allinfo,'查找成功').success(res)
   }else {
-    new Reslut({},'查找失败').fail(res)
+    new Reslut({},'您没有权限').fail(res.status(401))
   }
 })
 
@@ -98,7 +99,7 @@ router.get('/powerinfo', async(req,res) => {
     console.log(powerinfo)
     new Reslut(powerinfo,'获取权限信息成功').success(res)
   }else {
-    new Reslut({},'获取权限信息失败').fail(res)
+    new Reslut({},'获取权限信息失败').fail(res.status(401))
   }
 })
 

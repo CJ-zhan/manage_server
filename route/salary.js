@@ -6,7 +6,7 @@ const { Salary } = require('../models/employee')
 
 //获取员工薪资信息
 router.get('/info', async(req,res,next) => {
-  console.log(req.query)
+  console.log('获取薪资')
   const params = {
     ...req.query
   }

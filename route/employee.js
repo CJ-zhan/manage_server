@@ -6,7 +6,7 @@ const { Employee, Salary } = require('../models/employee')
 
 //获取员工信息
 router.get('/info', async(req,res,next) => {
-    console.log(req.query)
+    console.log('获取员工信息')
     let params = {
       ...req.query
     }
@@ -96,7 +96,7 @@ router.post('/addinfo',async(req,res,next) => {
 })
 
 //批量添加员工信息
-router.post('/addmany',async (req,res,next) => {
+router.post('/addmany',(req,res,next) => {
   const params = [
     ...req.body.data_json
   ]
@@ -105,7 +105,7 @@ router.post('/addmany',async (req,res,next) => {
     total:params.length,
     success: 0
   }
-  params.map(async item => {
+   params.map(async (item,index) => {  
     await Employee.create({
       p_name:item.p_name,
       p_sex:item.p_sex,
@@ -140,11 +140,11 @@ router.post('/addmany',async (req,res,next) => {
       s_name: employeeid._id,
       mtime:(new Date().getTime())/1000
     })
-    console.log(data)
     data.success = data.success + 1
+    if(data.success == data.total) {
+      new Reslut(data,'新增成功').success(res)
+    }
   })
-  new Reslut(data, '新增成功').success(res)
-  console.log(123)
 })
 //编辑员工信息
 router.post('/editinfo',async(req,res,next) => {

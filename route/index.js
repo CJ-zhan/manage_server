@@ -36,7 +36,8 @@ router.use((req,res,next) => {
 
 //路由错误集中处理 
 router.use((err,req,res,next) => {
-  console.log({err})
+  // console.log({err})
+  console.log(err.name)
   //token错误处理
   if(err.name && err.name === 'UnauthorizedError') {
     const {status = 401,message} = err

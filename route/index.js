@@ -37,20 +37,30 @@ router.use((req,res,next) => {
 //路由错误集中处理 
 router.use((err,req,res,next) => {
   console.log({err})
+  console.log(err.keyValue)
   console.log(err.name)
   //token错误处理
   if(err.name && err.name === 'UnauthorizedError') {
     const {status = 401,message} = err
     new Result({},'Token验证失效',{
+      errCode:10200,
       error:status,
       errorMsg:message
     }).jwtError(res.status(status))
-  }else if(err.name && err.name === 'MongoError'){
+  }else if(err.name && err.name === 'MongoError'&& err.keyValue.hasOwnProperty('p_id')){
     const {status = 500,message} = err
     new Result({},'员工ID错误，数据插入失败',{
       error:status,
       errorMsg:message
     }).fail(res.status(status))
+    
+  }else if(err.name && err.name === 'MongoError' && err.keyValue.hasOwnProperty('p_pid')){
+    const {status = 500,message} = err
+    new Result({},'员工身份证重复，数据插入失败',{
+      error:status,
+      errorMsg:message
+    }).fail(res.status(status))
+    
   }else{//其他服务器错误处理
     const msg = (err && err.message) || '系统错误'
     const statusCode = (err.output && err.output.statusCode) || 500;

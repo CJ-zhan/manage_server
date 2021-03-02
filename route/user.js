@@ -47,7 +47,7 @@ router.post('/login',async(req,res,next) => {
       //jwt获取生成token
       const token = jwt.sign({
         id: String(username._id),
-      },SELRET_KEY)
+      },SELRET_KEY,{expiresIn: 60 * 60})
       let data = {
         token
       }
@@ -60,6 +60,27 @@ router.post('/login',async(req,res,next) => {
     new Reslut({},'密码错误').fail(res.status(403))
   }
 })
+
+//用户密码更改接口
+router.post('/resetpwd',async(req,res,next) => {
+  console.log(req.body)
+  const raw = String(req.headers.authorization).split(' ').pop()
+  const tokenData = jwt.verify(raw,SELRET_KEY)
+  const {id} = tokenData
+  const info = await User.findOne({
+    _id:id
+  })
+  const { password,newpassword} = req.body
+  const isPasswordValid = require('bcrypt').compareSync(password,info.password )
+  //未写完...
+  if (isPasswordValid) {
+    await User.updateOne({_id:info._id},{password: newpassword})
+    new Reslut({errCode:10200},'密码修改成功,请重新登录').success(res)
+  }else{
+    new Reslut({},'修改密码失败').fail(res)
+  }
+})
+
 
 //获取所有管理员信息接口
 router.get('/info', async(req,res) => {
@@ -96,7 +117,6 @@ router.get('/powerinfo', async(req,res) => {
       role,
       status
     }
-    console.log(powerinfo)
     new Reslut(powerinfo,'获取权限信息成功').success(res)
   }else {
     new Reslut({},'获取权限信息失败').fail(res.status(401))
@@ -106,15 +126,12 @@ router.get('/powerinfo', async(req,res) => {
 //启用管理员状态
 router.post('/openpower',async(req,res,next) => {
   const mtime = new Date()
-  console.log(mtime.getTime()/1000)
-  console.log(req.body)
   await User.updateOne({_id:req.body._id},{status: 1,mtime: (mtime.getTime()/1000)})
   new Reslut({},'启用成功').success(res)
 })
 //禁用管理员状态
 router.post('/closepower',async(req,res,next) => {
   const mtime = new Date()
-  console.log(req.body)
   await User.updateOne({_id:req.body._id},{status: 0,mtime: (mtime.getTime()/1000)})
   new Reslut({},'禁用成功').success(res)
 })

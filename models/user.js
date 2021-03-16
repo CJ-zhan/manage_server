@@ -10,9 +10,13 @@ UserSchema = new mongoose.Schema({
       return require('bcrypt').hashSync(val,10)
     }
   },
+  photo:{
+    type:String
+  },
   role:{ type:String },
   status:{ type:Number },
   nickname: { type: String },
+  useremail:{ type:String },
   mtime:{ type:String }
 })
 const User = mongoose.model('User',UserSchema)

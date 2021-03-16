@@ -81,6 +81,13 @@ router.post('/resetpwd',async(req,res,next) => {
   }
 })
 
+// 上传用户头像
+router.post('/changephoto',async(req,res) => {
+  console.log('上传头像')
+
+})
+
+
 
 //获取所有管理员信息接口
 router.get('/info', async(req,res) => {
@@ -109,13 +116,14 @@ router.get('/powerinfo', async(req,res) => {
     _id:id
   })
   if (info){
-    const {_id,user,nickname,role, status} = await User.findOne({_id:id})
+    const {_id,user,nickname,role, status,photo} = await User.findOne({_id:id})
     const powerinfo = {
       _id,
       user,
       nickname,
       role,
-      status
+      status,
+      photo
     }
     new Reslut(powerinfo,'获取权限信息成功').success(res)
   }else {

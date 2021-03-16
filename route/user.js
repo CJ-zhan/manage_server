@@ -23,7 +23,9 @@ router.post('/register',async(req,res,next) => {
       role:'generaladmin',
       status: 1,
       nickname:'普通管理员',
-      mtime: (new Date().getTime())/1000
+      mtime: (new Date().getTime())/1000,
+      email:req.body.email,
+      bio:'',
     })
     new Reslut({},'注册成功,请登录!').success(res)
   }
@@ -70,14 +72,13 @@ router.post('/resetpwd',async(req,res,next) => {
   const info = await User.findOne({
     _id:id
   })
-  const { password,newpassword} = req.body
-  const isPasswordValid = require('bcrypt').compareSync(password,info.password )
-  //未写完...
+  const { olepassword,newpassword} = req.body
+  const isPasswordValid = require('bcrypt').compareSync(olepassword,info.password )
   if (isPasswordValid) {
     await User.updateOne({_id:info._id},{password: newpassword})
-    new Reslut({errCode:10200},'密码修改成功,请重新登录').success(res)
+    new Reslut({errCode:10200},'密码修改成功,请重新登录!').success(res)
   }else{
-    new Reslut({},'修改密码失败').fail(res)
+    new Reslut({},'修改密码失败').fail(res.status(403))
   }
 })
 
@@ -116,14 +117,16 @@ router.get('/powerinfo', async(req,res) => {
     _id:id
   })
   if (info){
-    const {_id,user,nickname,role, status,photo} = await User.findOne({_id:id})
+    const {_id,user,nickname,role, status,photo,email,bio} = await User.findOne({_id:id})
     const powerinfo = {
       _id,
       user,
       nickname,
       role,
       status,
-      photo
+      photo,
+      email,
+      bio
     }
     new Reslut(powerinfo,'获取权限信息成功').success(res)
   }else {

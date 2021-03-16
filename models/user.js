@@ -16,6 +16,8 @@ UserSchema = new mongoose.Schema({
   role:{ type:String },
   status:{ type:Number },
   nickname: { type: String },
+  email: { type: String },
+  bio:{ type: String },
   useremail:{ type:String },
   mtime:{ type:String }
 })

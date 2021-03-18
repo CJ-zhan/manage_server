@@ -85,8 +85,12 @@ router.post('/resetpwd',async(req,res,next) => {
   }
 })
 
+
+//用户头像获取
+
 // 上传用户头像
 router.post('/changephoto',async(req,res) => {
+  console.log(req.body)
   const raw = String(req.headers.authorization).split(' ').pop()
   const tokenData = jwt.verify(raw,SELRET_KEY)
   const {id} = tokenData
@@ -94,18 +98,26 @@ router.post('/changephoto',async(req,res) => {
     _id:id
   })
   if(info) {
-    await Photo.create({
-      pic:String(req.body.photo),
-      pic_user:info._id,
-      mtime: (new Date().getTime())/1000,
-  
+    const isfirst = await Photo.findOne({
+      pic_user:info._id
     })
-    new Reslut({},'头像更新成功~').success(res)
+    console.log(isfirst)
+    if(!isfirst) {
+      await Photo.create({
+        pic:req.body.photo,
+        pic_user:info._id,
+        mtime: (new Date().getTime())/1000,
+      })
+      new Reslut({},'头像修改成功~').success(res)
+    }else{
+      const params = req.body
+      await Photo.updateOne({_id:isfirst._id},params)
+      new Reslut({},'头像更新成功~').success(res)
+    }
+    
   }else{
     new Reslut({},'你没有权限修改').fail(res)
   }
-  
-
 })
 //修改管理员信息
 router.post('/changeinfo',async(req,res) => {
@@ -153,7 +165,15 @@ router.get('/powerinfo', async(req,res) => {
     _id:id
   })
   if (info){
-    const {_id,user,nickname,role, status,photo,email,bio} = await User.findOne({_id:id})
+    let photo = ''
+    const pic = await Photo.findOne({pic_user:id})
+    if (pic) {
+      photo = pic.pic
+    }else{
+      photo = undefined
+    }
+    // console.log(photo)
+    const {_id,user,nickname,role, status,email,bio} = await User.findOne({_id:id})
     const powerinfo = {
       _id,
       user,
@@ -162,7 +182,8 @@ router.get('/powerinfo', async(req,res) => {
       status,
       photo,
       email,
-      bio
+      bio,
+      photo
     }
     new Reslut(powerinfo,'获取权限信息成功').success(res)
   }else {

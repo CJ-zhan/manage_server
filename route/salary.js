@@ -12,6 +12,7 @@ router.get('/info', async(req,res,next) => {
   }
   if (params.s_name || params.s_name !== undefined) {//获取搜索员工薪资信息
     const info = await Salary.find({s_name:params.s_name}).populate('s_name')
+    console.log(info)
     new Reslut(info,'查询成功').success(res)
     return
   }

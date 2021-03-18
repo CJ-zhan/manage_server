@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Reslut = require('../utils/Result')
 //导入User规则模块
-const { User } = require('../models/user')
+const { User,Photo } = require('../models/user')
 //jwt获取生成token
 const jwt = require('jsonwebtoken')
 const { SELRET_KEY } = require('../utils/constant')
@@ -24,8 +24,8 @@ router.post('/register',async(req,res,next) => {
       status: 1,
       nickname:'普通管理员',
       mtime: (new Date().getTime())/1000,
-      email:req.body.email,
-      bio:'',
+      email:req.body.email || 'www.123@gmail.com',
+      bio:'海纳百川，人生乃大',
     })
     new Reslut({},'注册成功,请登录!').success(res)
   }
@@ -72,22 +72,58 @@ router.post('/resetpwd',async(req,res,next) => {
   const info = await User.findOne({
     _id:id
   })
-  const { olepassword,newpassword} = req.body
-  const isPasswordValid = require('bcrypt').compareSync(olepassword,info.password )
+  const { oldpassword,newpassword} = req.body
+  const isPasswordValid = require('bcrypt').compareSync(oldpassword,info.password )
   if (isPasswordValid) {
+    if(oldpassword === newpassword ){
+      new Reslut({repeat:true},'旧密码与新密码不能相同哦~').success(res)
+    }
     await User.updateOne({_id:info._id},{password: newpassword})
     new Reslut({errCode:10200},'密码修改成功,请重新登录!').success(res)
   }else{
-    new Reslut({},'修改密码失败').fail(res.status(403))
+    new Reslut({},'验证错误，修改密码失败！').fail(res.status(403))
   }
 })
 
 // 上传用户头像
 router.post('/changephoto',async(req,res) => {
-  console.log('上传头像')
+  const raw = String(req.headers.authorization).split(' ').pop()
+  const tokenData = jwt.verify(raw,SELRET_KEY)
+  const {id} = tokenData
+  const info = await User.findOne({
+    _id:id
+  })
+  if(info) {
+    await Photo.create({
+      pic:String(req.body.photo),
+      pic_user:info._id,
+      mtime: (new Date().getTime())/1000,
+  
+    })
+    new Reslut({},'头像更新成功~').success(res)
+  }else{
+    new Reslut({},'你没有权限修改').fail(res)
+  }
+  
 
 })
-
+//修改管理员信息
+router.post('/changeinfo',async(req,res) => {
+  const params = req.body
+  console.log(params)
+  const raw = String(req.headers.authorization).split(' ').pop()
+  const tokenData = jwt.verify(raw,SELRET_KEY)
+  const {id} = tokenData
+  const info = await User.findOne({
+    _id:id
+  })
+  if(info) {
+    await User.updateOne({_id:info._id},params)
+  new Reslut({},'保存修改成功~').success(res)
+  }else{
+    new Reslut({},'你没有权限修改').fail(res)
+  }
+})
 
 
 //获取所有管理员信息接口

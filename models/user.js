@@ -10,9 +10,6 @@ UserSchema = new mongoose.Schema({
       return require('bcrypt').hashSync(val,10)
     }
   },
-  photo:{
-    type:String
-  },
   role:{ type:String },
   status:{ type:Number },
   nickname: { type: String },
@@ -21,8 +18,21 @@ UserSchema = new mongoose.Schema({
   useremail:{ type:String },
   mtime:{ type:String }
 })
+
+
+//头像存储表信息关联  规则
+PhotoSchema = new mongoose.Schema({
+  // pic:{type:Buffer},
+  pic:{type:String},
+  pic_user:{ type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  mtime:{ type:String}
+})
+
 const User = mongoose.model('User',UserSchema)
+const Photo = mongoose.model('Photo',PhotoSchema)
+
 
 module.exports= {
-  User
+  User,
+  Photo
 }

@@ -101,10 +101,9 @@ router.post('/changephoto',async(req,res) => {
     const isfirst = await Photo.findOne({
       pic_user:info._id
     })
-    console.log(isfirst)
     if(!isfirst) {
       await Photo.create({
-        pic:req.body.photo,
+        pic:req.body.pic,
         pic_user:info._id,
         mtime: (new Date().getTime())/1000,
       })

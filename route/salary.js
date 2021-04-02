@@ -10,10 +10,22 @@ router.get('/info', async(req,res,next) => {
   const params = {
     ...req.query
   }
-  if (params.s_name || params.s_name !== undefined) {//获取搜索员工薪资信息
-    const info = await Salary.find({s_name:params.s_name}).populate('s_name')
-    console.log(info)
-    new Reslut(info,'查询成功').success(res)
+  if (params.snameid || params.snameid !== undefined) {//获取搜索员工薪资信息
+    console.log(params.snameid)
+    let snameid = params.snameid
+    let info = []
+    let temp = 0
+    let nums = snameid.length
+    snameid.forEach(async item => {
+      let infoitem = await Salary.find({s_name:item}).populate('s_name')
+      info.push(...infoitem)
+      temp++
+      if (temp === nums) {
+        new Reslut(info,'查询成功').success(res)
+        console.log(info)
+        return   
+      }
+    });
     return
   }
   const allinfo = await Salary.find({}).populate('s_name')

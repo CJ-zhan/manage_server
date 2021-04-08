@@ -76,6 +76,7 @@ router.post('/addinfo',async(req,res,next) => {
       p_position:req.body.p_position,
       p_phone:req.body.p_phone,
       p_email:req.body.p_email,
+      p_role:req.body.p_role,
       p_rtime:req.body.p_rtime,
       p_ztime:req.body.p_ztime,
       mtime:(new Date().getTime())/1000
@@ -88,6 +89,7 @@ router.post('/addinfo',async(req,res,next) => {
       s_fund: req.body.s_fund || 0,
       s_addsalary: req.body.s_addsalary || 0,
       s_allowance: req.body.s_allowance || 0,
+      s_changesalary:req.body.s_changesalary || 0,
       s_realsalary: req.body.s_realsalary || 4000,
       s_name: employeeid._id,
       mtime:(new Date().getTime())/1000
@@ -100,7 +102,7 @@ router.post('/addmany',(req,res,next) => {
   const params = [
     ...req.body.data_json
   ]
-  // console.log(params)
+  console.log(params)
   const data = {
     total:params.length,
     success: 0
@@ -122,6 +124,7 @@ router.post('/addmany',(req,res,next) => {
       p_id:item.p_id,
       p_department:item.p_department,
       p_position:item.p_position,
+      p_role:item.p_role,
       p_phone:item.p_phone,
       p_email:item.p_email,
       p_rtime:item.p_rtime,
@@ -136,6 +139,7 @@ router.post('/addmany',(req,res,next) => {
       s_fund:item.s_fund || 0,
       s_addsalary: item.s_addsalary || 0,
       s_allowance: item.s_allowance || 0,
+      s_changesalary:req.body.s_changesalary || 0,
       s_realsalary: item.s_realsalary || 4000,
       s_name: employeeid._id,
       mtime:(new Date().getTime())/1000

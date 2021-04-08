@@ -6,7 +6,7 @@ EmployeeSchema = new mongoose.Schema({
   p_name:{ type:String },
   p_sex:{ type:Number },
   p_birth:{ type:String},
-  p_pid:{ type:String,unique:true},
+  p_pid:{ type:String},
   p_minzu:{ type:String},
   p_nation:{ type:String },
   p_fromwhere:{ type:String },
@@ -22,6 +22,7 @@ EmployeeSchema = new mongoose.Schema({
   p_email:{ type:String},
   p_rtime:{ type:String},
   p_ztime:{ type:String},
+  p_role:{ type:String },
   mtime:{ type:String}
 })
 
@@ -33,6 +34,7 @@ SalarySchema = new mongoose.Schema({
   s_addsalary: { type:Number },
   s_allowance: { type:Number },
   s_realsalary: { type:Number },
+  s_changesalary: { type:Number },
   s_name:{ type: mongoose.Schema.Types.ObjectId, ref: 'Employee'},
   mtime:{ type:String}
 })

@@ -10,6 +10,7 @@ router.get('/info', async(req,res,next) => {
   const params = {
     ...req.query
   }
+  console.log(params)
   if (params.snameid || params.snameid !== undefined) {//获取搜索员工薪资信息
     console.log(params.snameid)
     let snameid = params.snameid
@@ -26,6 +27,10 @@ router.get('/info', async(req,res,next) => {
         return   
       }
     });
+    return
+  }
+  if (!params.page && !params.snameid) {
+    new Reslut([],'无数据').success(res)
     return
   }
   const allinfo = await Salary.find({}).populate('s_name')
